@@ -1,7 +1,5 @@
 +++
-title = "About"
-description = "A very brief intro"
-date = "2019-02-28"
+title = "About Me"
 aliases = ["about-me","contact"]
 +++
 
