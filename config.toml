@@ -1,4 +1,4 @@
-baseURL = "https://rakaar.github.io"
+baseURL = "https://rakaar.github.io/"
 languageCode = "en-us"
 title = "Raghavendra Kaushik"
 theme="archie"
