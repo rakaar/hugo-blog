@@ -1,0 +1,66 @@
+baseURL = "https://rakaar.github.io"
+languageCode = "en-us"
+title = "Raghavendra Kaushik"
+theme="archie"
+paginate = 5
+
+[markup]
+  [markup.highlight]
+    anchorLineNos = false
+    codeFences = true
+    guessSyntax = true
+    hl_Lines = ""
+    lineAnchors = ""
+    lineNoStart = 1
+    lineNos = true
+    lineNumbersInTable = true
+    noClasses = true
+    style = "monokai"
+    tabWidth = 4
+
+
+
+[params]
+	mode="light"
+	useCDN=false
+	subtitle = "Informal notes written while exploring various things"
+
+[[params.social]]
+name = "RSS"
+icon = "rss"
+url = "https://rakaar.github.io/index.xml"
+
+[[params.social]]
+name = "Email"
+icon = "mail"
+url = "mailto:rka87338@gmail.com"
+
+[[params.social]]
+name = "GitHub"
+icon = "github"
+url = "https://github.com/rakaar"
+
+[[params.social]]
+name = "Twitter"
+icon = "twitter"
+url = "https://twitter.com/raghavendrakau9"
+
+[[menu.main]]
+name = "Home"
+url = "/"
+weight = 1
+
+[[menu.main]]
+name = "Blog"
+url = "/posts"
+weight = 2
+
+[[menu.main]]
+name = "About"
+url = "/about"
+weight = 3
+
+[[menu.main]]
+name = "Tags"
+url = "/tags"
+weight = 4
