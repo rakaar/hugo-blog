@@ -1,0 +1,81 @@
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><title>Understanding Endorsement Policies in Hyperledger Fabric - Raghavendra Kaushik</title><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Introduction Endorsement Policy defines which peers should execute a transaction and endorse its result(signing the execution result with its certificates) so as to consider the transaction to be valid. In other words, only after a set of peers endorse a transaction&rsquo;s result then only the transaction will be committed in the ledger. This is my attempt to learn aspects of endorsement policy with more clarity
+Where is it defined Well, endorsement policies can be defined at three different levels"><meta property="og:image" content><meta property="og:title" content="Understanding Endorsement Policies in Hyperledger Fabric"><meta property="og:description" content="Introduction Endorsement Policy defines which peers should execute a transaction and endorse its result(signing the execution result with its certificates) so as to consider the transaction to be valid. In other words, only after a set of peers endorse a transaction&rsquo;s result then only the transaction will be committed in the ledger. This is my attempt to learn aspects of endorsement policy with more clarity
+Where is it defined Well, endorsement policies can be defined at three different levels"><meta property="og:type" content="article"><meta property="og:url" content="https://rakaar.github.io/posts/2020-04-07-understanding-endorsement-policies-in-hf/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-04-07T00:00:00+00:00"><meta property="article:modified_time" content="2020-04-07T00:00:00+00:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="Understanding Endorsement Policies in Hyperledger Fabric"><meta name=twitter:description content="Introduction Endorsement Policy defines which peers should execute a transaction and endorse its result(signing the execution result with its certificates) so as to consider the transaction to be valid. In other words, only after a set of peers endorse a transaction&rsquo;s result then only the transaction will be committed in the ledger. This is my attempt to learn aspects of endorsement policy with more clarity
+Where is it defined Well, endorsement policies can be defined at three different levels"><script src=https://rakaar.github.iojs/feather.min.js></script><link href=https://rakaar.github.io/css/fonts.b685ac6f654695232de7b82a9143a46f9e049c8e3af3a21d9737b01f4be211d1.css rel=stylesheet><link rel=stylesheet type=text/css media=screen href=https://rakaar.github.io/css/main.5a5ffad9e55591a3e4fcebdb9ed3807c781cabfdb4de3dcf89a187a9f18d9bd9.css></head><body><div class=content><header><div class=main><a href=https://rakaar.github.io>Raghavendra Kaushik</a></div><nav><a href=/>Home</a>
+<a href=/posts>Blog</a>
+<a href=/about>About</a>
+<a href=/tags>Tags</a></nav></header><main><article><div class=title><h1 class=title>Understanding Endorsement Policies in Hyperledger Fabric</h1><div class=meta>Posted on Apr 7, 2020</div></div><section class=body><h3 id=introduction>Introduction</h3><p>Endorsement Policy defines which peers should execute a transaction and endorse its result(signing the execution result with its certificates)
+so as to consider the transaction to be valid. In other words, only after a set of peers endorse a transaction&rsquo;s result then only
+the transaction will be committed in the ledger. <em>This is my attempt to learn aspects of endorsement policy with more clarity</em></p><h3 id=where-is-it-defined>Where is it defined</h3><p>Well, endorsement policies can be defined at three different levels</p><ul><li>Chaincode Level</li><li>Collection Level</li><li>Key Level</li></ul><h3 id=syntax>Syntax</h3><p>The Endorsement policies is expressed in terms of <code>MSP_ID.ROLE</code>(also known as <em>principal</em>). The sytax for
+a endorsement policy is <code>EXPR(E[, E...]</code>
+Some Examples are:-</p><ul><li><code>AND('Org1.member', 'Org2.member', 'Org3.member')</code> or <code>OutOf(3, 'Org1.member', 'Org2.member', 'Org3.member')</code>
+Means signature is required from all the three principals</li><li><code>OR('Org1.member', 'Org2.member')</code> or <code>OutOf(1, 'Org1.member', 'Org2.member')</code>
+Means signature is requried from either of the principals</li></ul><h3 id=endorsement-policy-at-chaincode-level>Endorsement Policy at Chaincode Level</h3><p>Endorsement policies defined at chaincode level is agreed at the time of approval
+of the chaincode definition. By default, this needs to be approved by majority
+of he channel members. Now the question is how do you define this ? There are 2 ways</p><ul><li>Use Fabric SDK APIs</li><li>Use CLI using <code>—-signature-policy</code> while committing the chaincode</li></ul><p>If none of the above is done, then by default endorsement policy would be
+that majority of channel members need to endorse.</p><h3 id=what-are-private-data-collection>What are Private data Collection</h3><p>Suppose within a channel, you want a transaction to occur, which must be known
+to only a few members of the channel. One way of achieving it would be to create a
+furthur channel, but that would cause excess burden of maintaining chaincode, MSPs etc.
+Private data Collection is the solution for exchanging private data within a channel.
+Here only the members defined in the <em>collection</em> would store data in a private DB also called
+as <em>side DB</em>. Also every peer stores the hash of the data in its ledger. Note that the data
+passes from one member to other without the ordering service. Even the ordering services get
+the hash of the data. Hence private data collections can be used when you want to keep the
+data confidential from the ordering services. Also, forgot to mention another feature, it also allows
+a part of the transactional data to be confidential from few members of the channel.</p><h3 id=endorsement-policy-at-collection-level>Endorsement Policy at Collection Level</h3><p>Endorsement Policy at Collection Level can be defined at the place where collections are defined,which is generally in a JSON file. And example would look something like this(example taken from HF docs):</p><div class=highlight><div style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>{
+    &#34;name&#34;: &#34;collectionMarblePrivateDetails&#34;,
+    &#34;policy&#34;: &#34;OR(&#39;Org1MSP.member&#39;)&#34;,
+    &#34;requiredPeerCount&#34;: 0,
+    &#34;maxPeerCount&#34;: 3,
+    &#34;blockToLive&#34;:3,
+    &#34;memberOnlyRead&#34;: true,
+    &#34;memberOnlyWrite&#34;:true,
+    &#34;endorsementPolicy&#34;: {
+      &#34;signaturePolicy&#34;: &#34;OR(&#39;Org1MSP.member&#39;)&#34;
+    }
+ }
+</code></pre></td></tr></table></div></div><p>The last key is the endorsement policy defined for the private data collection named &ldquo;collectionMarblePrivateDetails&rdquo;. Do not confuse the first key &lsquo;policy&rsquo; with endorsement policy. The value of the key &lsquo;policy&rsquo; defines defines which organizations peers are allowed to persist the collection data. This collection level endorsement policy can be utlized to override the chaincode level endorsement policy.</p><h3 id=endorsement-policy-at-key-level>Endorsement Policy at Key Level</h3><p>Endorsement Policies at Key Level can be defined from within the chaincode. For example, the Go Shim API provides basic functions like <code>SetStateValidationParameter(key string, ep []byte) error</code>, <code>GetStateValidationParameter(key string) ([]byte, error)</code>, <code>SetPrivateDataValidationParameter(collection, key string, ep []byte) error</code>, <code>GetPrivateDataValidationParameter(collection, key string) ([]byte, error)</code>.
+There are also extension provided by the API like</p><div class=highlight><div style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>type KeyEndorsementPolicy interface {
+    // Policy returns the endorsement policy as bytes
+    Policy() ([]byte, error)
+
+    // AddOrgs adds the specified orgs to the list of orgs that are required
+    // to endorse
+    AddOrgs(roleType RoleType, organizations ...string) error
+
+    // DelOrgs delete the specified channel orgs from the existing key-level endorsement
+    // policy for this KVS key. If any org is not present, an error will be returned.
+    DelOrgs(organizations ...string) error
+
+    // ListOrgs returns an array of channel orgs that are required to endorse changes
+    ListOrgs() ([]string)
+}
+</code></pre></td></tr></table></div></div><p>Adding orgs to a key level Endorsement Policy is as simple as adding org&rsquo;s MSP IDs to the <code>AddOrgs()</code>, call <code>Policy()</code> to construct the byte array and pass it in the <code>SetStateValidationParameter()</code>.</p><p><em>This was about defining Endorsement Policies at different level, for more refer to <a href=https://hyperledger-fabric.readthedocs.io/en/release-2.0/endorsement-policies.html>docs</a></em></p></section><div class=post-tags><nav class="nav tags"><ul class=tags><li><a href=/tags/hyperledger>hyperledger</a></li><li><a href=/tags/blockchain>blockchain</a></li><li><a href=/tags/distributed-systems>distributed systems</a></li></ul></nav></div></article></main><footer><hr><a class=soc href=https://rakaar.github.io/index.xml title=RSS><i data-feather=rss></i></a>|<a class=soc href=mailto:rka87338@gmail.com title=Email><i data-feather=mail></i></a>|<a class=soc href=https://github.com/rakaar title=GitHub><i data-feather=github></i></a>|<a class=soc href=https://twitter.com/raghavendrakau9 title=Twitter><i data-feather=twitter></i></a>|⚡️
+2021 <a href=https://github.com/athul/archie>Archie Theme</a> | Built with <a href=https://gohugo.io>Hugo</a></footer><script>feather.replace()</script></div></body></html>

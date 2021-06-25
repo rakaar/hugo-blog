@@ -1,0 +1,140 @@
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><title>Eudyptual challenges task 01 - Raghavendra Kaushik</title><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Task The task briefly can be described as:-
+ Write a linux kernel module that when loaded should print &lsquo;Hello&rsquo; in the debug level of the linux. You also need to write the makefile which builds the kernel module against the source file.
+ Kernel Modules:- Modules are pieces of code that can be loaded or unloaded as per requirement. As this task talks about inserting module, it is very dangerous to experiment on the kernel you are using."><meta property="og:image" content><meta property="og:title" content="Eudyptual challenges task 01"><meta property="og:description" content="Task The task briefly can be described as:-
+ Write a linux kernel module that when loaded should print &lsquo;Hello&rsquo; in the debug level of the linux. You also need to write the makefile which builds the kernel module against the source file.
+ Kernel Modules:- Modules are pieces of code that can be loaded or unloaded as per requirement. As this task talks about inserting module, it is very dangerous to experiment on the kernel you are using."><meta property="og:type" content="article"><meta property="og:url" content="https://rakaar.github.io/posts/2020-03-30-eudyptula-challenges-task-01/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-03-30T00:00:00+00:00"><meta property="article:modified_time" content="2020-03-30T00:00:00+00:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="Eudyptual challenges task 01"><meta name=twitter:description content="Task The task briefly can be described as:-
+ Write a linux kernel module that when loaded should print &lsquo;Hello&rsquo; in the debug level of the linux. You also need to write the makefile which builds the kernel module against the source file.
+ Kernel Modules:- Modules are pieces of code that can be loaded or unloaded as per requirement. As this task talks about inserting module, it is very dangerous to experiment on the kernel you are using."><script src=https://rakaar.github.iojs/feather.min.js></script><link href=https://rakaar.github.io/css/fonts.b685ac6f654695232de7b82a9143a46f9e049c8e3af3a21d9737b01f4be211d1.css rel=stylesheet><link rel=stylesheet type=text/css media=screen href=https://rakaar.github.io/css/main.5a5ffad9e55591a3e4fcebdb9ed3807c781cabfdb4de3dcf89a187a9f18d9bd9.css></head><body><div class=content><header><div class=main><a href=https://rakaar.github.io>Raghavendra Kaushik</a></div><nav><a href=/>Home</a>
+<a href=/posts>Blog</a>
+<a href=/about>About</a>
+<a href=/tags>Tags</a></nav></header><main><article><div class=title><h1 class=title>Eudyptual challenges task 01</h1><div class=meta>Posted on Mar 30, 2020</div></div><section class=body><h3 id=task>Task</h3><p>The task briefly can be described as:-</p><blockquote><p>Write a linux kernel module that when loaded should print &lsquo;Hello&rsquo; in the debug level of the linux.
+You also need to write the makefile which builds the kernel module against the source file.</p></blockquote><h3 id=kernel-modules->Kernel Modules:-</h3><p>Modules are pieces of code that can be loaded or unloaded as per requirement.
+As this task talks about inserting module, it is very dangerous to experiment on the kernel you are using. Hence it would be better to try the task in a Virtual machine.
+Coming back to modules, to get the list of modules you can use the command <code>lsmod</code> . To get information about a specific module you can use <code>modinfo MODULE_NAME</code></p><h3 id=make>Make</h3><p>In linux, make is used to build executable programmes and libraries.
+Makefile  is a file that contains a list of instructions to build programmes and libraries in a particular syntax (in the background it utilizes the make hence its called a makefile)</p><p>What is a build process:</p><ul><li>Compiler taking source code and converting to object files</li><li>Linker taking the object files and converting them to executable</li></ul><h3 id=syntax-of-makefile>Syntax of makefile</h3><div class=highlight><div style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>target: dependencies
+&lt;tab&gt; system_command
+</code></pre></td></tr></table></div></div><p>For example</p><div class=highlight><div style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>all:
+    g++ main.cpp hello.cpp factorial.cpp -o hello
+</code></pre></td></tr></table></div></div><p>all is the default target for a make file. if no other target is specified, it will execute this target</p><p>Example of target with no system commands(look at <code>all</code>),</p><div class=highlight><div style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>all: hello
+
+hello: a.o b.o c.o
+    g++ a.0 b.o c.o
+a.o: a.cpp
+    g++ -c a.cpp
+b.o: b.cpp
+    g++ -c b.cpp
+c.o: c.cpp
+    g++ -c c.cpp
+clean:
+    rm -rf *.o
+</code></pre></td></tr></table></div></div><p>Here in case to execute all of them
+you can simple use make
+to execute one specific target(useful in case when one file is changed)</p><div class=highlight><div style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>make target name
+</code></pre></td></tr></table></div></div><p>another example to make things clear</p><div class=highlight><div style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>all: hello
+
+hello: a b c
+	@echo &#34;all&#34;
+a:
+	@echo &#34;a&#34;
+b: 
+	@echo &#34;b&#34;
+c: 
+	@echo &#34;c&#34;
+clean:
+	rm -rf *.o
+</code></pre></td></tr></table></div></div><p>In the above example command make will print only &ldquo;all&rdquo; on the terminal
+command <code>make a</code> will print only &ldquo;a&rdquo; on the terminal</p><p>using variable names in makefile
+its as simple as assigning a variable and accessing using dollar notation
+for example</p><div class=highlight><div style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>CC = gcc
+</code></pre></td></tr></table></div></div><p>$(CC) to use gcc</p><h3 id=kernel-debug-level>Kernel Debug level</h3><p>There are totally 8 levels of log in linux, from level0 to level7. The level7 is the debug level.</p><h3 id=task-1>Task</h3><p>The C code which accomplishes the task: hello_world_module.c</p><div class=highlight><div style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>#include &lt;linux/module.h&gt; // included for all kernel modules
+#include &lt;linux/kernel.h&gt; // included for KERN_INFO
+#include &lt;linux/init.h&gt;   // for the __init  and __exit macors
+
+MODULE_LICENSE(&#34;GPL&#34;);
+MODULE_AUTHOR(&#34;RKA&#34;);
+MODULE_DESCRIPTION(&#34;Accomplish Task 1&#34;);
+
+static int __init hello_init(void) {
+    printk(KERN_DEBUG &#34;Hello \n&#34;); 
+    // since the challenge asks to print in the debug level
+    return 0;
+    // Non zero return implies module couldn&#39;t load
+}
+static void __exit hello_cleanup(void) {
+    printk(KERN_DEBUG &#34;Clean module\n&#34;);
+}
+
+module_init(hello_init); // when module loads
+module_exit(hello_cleanup); // when module unloadss
+</code></pre></td></tr></table></div></div><p>  
+At the beginning the headers that required are included. Description in comments.
+The next three lines, give an info about the module. The info about the module can be obtained from the command line using modinfo MODULE_NAME</p><p>There are 2 static functions on that runs when module is loaded, and the other when module is unloaded.</p><div class=highlight><div style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>Static function is a function that has scope limited to its object file. The advantage of this is that we can use the same name at different files, without any clashes.
+</code></pre></td></tr></table></div></div><p>The last two lines indicate what functions to be called on loading and unloading of the module. We can also see that here printk is used instead of printf, because we want it to print in the kernel logs.  Also in  printk function defines the log level to which it wants to print. Here since in the task, it is asked to print at debug level, KERN_DEBUG is the first argument.</p><p>Now to build this module we need to write a makefile
+here is its code:Makefile</p><div class=highlight><div style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>obj-m += hello_world_module.o
+all:
+    make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+clean:
+     make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
+</code></pre></td></tr></table></div></div><p>The first line is called the goal definition. It indicates what files need to be built
+Run the makefile by typing make in the terminal. We get a list of different files. We need the <code>.ko</code> file. By loading a kernel module means we are inserting this <code>.ko</code> file in the kernel</p><p>Now to insert the hello_world_module.c (To make it ready to convert into a .ko file)</p><div class=highlight><div style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>sudo insmod hello_world_module.ko
+</code></pre></td></tr></table></div></div><p>Verify that you have inserted the module</p><p>You can do this by using the dmesg ,which print the kernel log
+Also you can check the log file whose path is /var/log/kern.log</p><p>To remove the module, the comand <code>sudo rmmod MODULE_NAME</code> can be used.
+To verify that you have removed a module, you can check using the dmesg command or verify the kern.log file</p><p><strong>NOTE</strong>: Suppose you are getting an error like &lsquo;Operation not permitted&rsquo;. It is due to the fact we are trying a module which is not signed. In generally modules are signed, which are like proof the module is a valid one. You can either manually sign the module by yourself or you can simply turn off the secure boot to add unsigned modules in your kernel. You can also see the kernel logs that there is a entry which says &lsquo;module verification failed&rsquo;</p><h3 id=references>References:</h3><ul><li><a href=http://mrbook.org/blog/tutorials/make/>http://mrbook.org/blog/tutorials/make/</a></li><li><a href=https://opensource.com/article/18/8/what-how-makefile>https://opensource.com/article/18/8/what-how-makefile</a></li><li><a href=https://www.kernel.org/doc/Documentation/kbuild/makefiles.txtm>https://www.kernel.org/doc/Documentation/kbuild/makefiles.txtm</a></li></ul></section><div class=post-tags><nav class="nav tags"><ul class=tags><li><a href=/tags/kernel>kernel</a></li><li><a href=/tags/linux>linux</a></li><li><a href=/tags/make>make</a></li><li><a href=/tags/module>module</a></li></ul></nav></div></article></main><footer><hr><a class=soc href=https://rakaar.github.io/index.xml title=RSS><i data-feather=rss></i></a>|<a class=soc href=mailto:rka87338@gmail.com title=Email><i data-feather=mail></i></a>|<a class=soc href=https://github.com/rakaar title=GitHub><i data-feather=github></i></a>|<a class=soc href=https://twitter.com/raghavendrakau9 title=Twitter><i data-feather=twitter></i></a>|⚡️
+2021 <a href=https://github.com/athul/archie>Archie Theme</a> | Built with <a href=https://gohugo.io>Hugo</a></footer><script>feather.replace()</script></div></body></html>

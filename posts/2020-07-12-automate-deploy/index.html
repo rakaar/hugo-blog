@@ -1,0 +1,89 @@
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><title>Automate deployment on an EC2 instance using Github Webhooks - Raghavendra Kaushik</title><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Credits This article have been mainly inspired by the project -Midgard. Thanks to Pankaj Kumar with whom I setup this Continuous deployment. I am a newbie in this field of deployment. If any mistakes, please do provide a feedback. Also thanks to Shubham Mishra for helping us in the process.
+Problem Statement There is a repository on github and you have an EC2 instance(or any instance provided by an IaaS). On every push to certain branch, you want the code in the instance to be updated."><meta property="og:image" content><meta property="og:title" content="Automate deployment on an EC2 instance using Github Webhooks"><meta property="og:description" content="Credits This article have been mainly inspired by the project -Midgard. Thanks to Pankaj Kumar with whom I setup this Continuous deployment. I am a newbie in this field of deployment. If any mistakes, please do provide a feedback. Also thanks to Shubham Mishra for helping us in the process.
+Problem Statement There is a repository on github and you have an EC2 instance(or any instance provided by an IaaS). On every push to certain branch, you want the code in the instance to be updated."><meta property="og:type" content="article"><meta property="og:url" content="https://rakaar.github.io/posts/2020-07-12-automate-deploy/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-07-12T00:00:00+00:00"><meta property="article:modified_time" content="2020-07-12T00:00:00+00:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="Automate deployment on an EC2 instance using Github Webhooks"><meta name=twitter:description content="Credits This article have been mainly inspired by the project -Midgard. Thanks to Pankaj Kumar with whom I setup this Continuous deployment. I am a newbie in this field of deployment. If any mistakes, please do provide a feedback. Also thanks to Shubham Mishra for helping us in the process.
+Problem Statement There is a repository on github and you have an EC2 instance(or any instance provided by an IaaS). On every push to certain branch, you want the code in the instance to be updated."><script src=https://rakaar.github.iojs/feather.min.js></script><link href=https://rakaar.github.io/css/fonts.b685ac6f654695232de7b82a9143a46f9e049c8e3af3a21d9737b01f4be211d1.css rel=stylesheet><link rel=stylesheet type=text/css media=screen href=https://rakaar.github.io/css/main.5a5ffad9e55591a3e4fcebdb9ed3807c781cabfdb4de3dcf89a187a9f18d9bd9.css></head><body><div class=content><header><div class=main><a href=https://rakaar.github.io>Raghavendra Kaushik</a></div><nav><a href=/>Home</a>
+<a href=/posts>Blog</a>
+<a href=/about>About</a>
+<a href=/tags>Tags</a></nav></header><main><article><div class=title><h1 class=title>Automate deployment on an EC2 instance using Github Webhooks</h1><div class=meta>Posted on Jul 12, 2020</div></div><section class=body><h1 id=credits>Credits</h1><p>This article have been mainly inspired by the project -<a href=https://github.com/iit-technology-ambit/Midgard>Midgard</a>. Thanks to <a href=https://github.com/Shankusu993>Pankaj Kumar</a> with whom I setup this Continuous deployment. I am a newbie in this field of deployment. If any mistakes, please do provide a feedback. Also thanks to <a href=https://github.com/grapheo12>Shubham Mishra</a> for helping us in the process.</p><h1 id=problem-statement>Problem Statement</h1><p>There is a repository on github and you have an EC2 instance(or any instance provided by an IaaS). On every push to certain branch, you want the code in the instance to be updated.</p><h1 id=approach>Approach</h1><p>For every repo, Github provides something called Webhooks. On occurance of an event(pull request or push or issue or comment, there is a long list you can find in settings)  every time Github sends a POST request with payload to the server, whose link you provide in the Repo settings.
+We build a Flask server and deploy it on the EC2 instance. And provide its link in the github webhooks section. So on every push when a payload is sent to the Flask Server, it runs a Bash Script which pulls from the Github the updated code and restarts the necessary things(like systemd service).</p><h1 id=action>Action:</h1><h3 id=script->Script:-</h3><p>For this example, I am considering deployment of a Django project(<a href=https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-18-04>ref</a>). Suppose the name of the project is <code>myproject</code>, and is present at the location <code>/home/username/myproject</code> in the instance. Assuming the systemd service file is written in a file name <code>myproject.service</code>. Lets make Bash Script file - <code>deploy.sh</code></p><div class=highlight><div style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#75715e>#!/bin/bash
+</span><span style=color:#75715e></span>
+cd /home/username/myproject 
+
+/usr/bin/git fetch
+sleep <span style=color:#ae81ff>5</span>
+
+/usr/bin/git reset --hard origin/master
+sleep <span style=color:#ae81ff>5</span>
+
+source env/bin/activate
+sleep <span style=color:#ae81ff>5</span>
+
+pip3 install -r requirements.txt
+sleep <span style=color:#ae81ff>5</span>
+
+python3 manage.py migrate
+sleep <span style=color:#ae81ff>5</span>
+
+sudo systemctl restart myproject.service
+
+</code></pre></td></tr></table></div></div><p>From the above code, it is clear that these following steps are done in order</p><ul><li>Moving to project directory</li><li>&ldquo;Force pulling&rdquo; from repo&rsquo;s master branch. - Using fetch and reset &ndash;hard</li><li>Activating the virtual environment</li><li>Installing requirements</li><li>Migrating DB</li><li>Restarting the service</li></ul><p>I would like to emphasize few things here</p><ul><li>Usage of /usr/bin/git instead of just git . Using just <code>git</code> doesn&rsquo;t help</li><li>Instead of doing <code>git pull</code>, we are doing <code>fetch</code> and <code>reset --hard</code>. Reason sometimes we force push to certain branches after squashing commits or rebasing in that case using just git pull won&rsquo;t update</li><li>The command sudo systemctl restart myproject.service is executed without password? This could be done because we added a line in /etc/sudoers (<a href=https://unix.stackexchange.com/questions/192706/how-could-we-allow-non-root-users-to-control-a-systemd-service>ref1</a>), (<a href=https://www.digitalocean.com/community/tutorials/how-to-edit-the-sudoers-file>ref2</a>)<div class=highlight><div style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>%username ALL=(ALL) NOPASSWD: /bin/systemctl restart myproject.service
+</code></pre></td></tr></table></div></div><div class=highlight><div style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback></code></pre></td></tr></table></div></div></li><li>I have added sleep in middle so that execution of commands continuously doesn&rsquo;t overload the instance CPU usage.</li></ul><h3 id=flask-application->Flask Application:-</h3><p>Refer <a href=https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-uswgi-and-nginx-on-ubuntu-18-04>this</a> to deploy a Flask application. And the code in <code>"app.py"</code> (the file which is run to start the server) like this.</p><div class=highlight><div style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>from flask import Flask, request
+from subprocess import call
+import os
+import json
+app = Flask(__name__)
+
+@app.route(&#34;/&#34;, methods=[&#39;GET&#39;, &#39;POST&#39;]) 
+def deploy():
+    if json.loads(request.get_data().decode(&#34;utf-8&#34;))[&#34;ref&#34;] == &#39;refs/heads/master&#39;:
+        call([&#34;./deploy.sh&#34;], shell=True) 
+        return &#34;Success&#34;, 200
+    return &#34;Success - not updated&#34;, 200
+
+if __name__ == &#34;__main__&#34;:
+    app.run(host=&#39;0.0.0.0&#39;)
+</code></pre></td></tr></table></div></div><p>When the Github Webhook is going to hit a POST request with payload at <code>/</code> route
+we are going to check from the payload that push is made to master branch or not. If so, then we run the script that we made above and return a string with status 200. If not then we simply return another string with status 200.
+Lets say this flask application deployed with domain name - <code>deploy.example.com</code></p><h3 id=configuring-github-webhooks->Configuring Github Webhooks:-</h3><p>Go to Settings of your repository. On the vertical Navbar present at the left click on the Webhooks
+Click on Add webhooks. And select the options as per the below image. Regarding the secret, better keep a randomly generated long string.
+<img src=/img/github_webhooks.png.PNG alt="Github Webhook Settings"></p><p>So, now as we planned on every push Github will send a payload to the Flask server, which contains a lot of details. On receiving the details, the Flask server will check if the push has be done to the particular branch or not(here &lsquo;master&rsquo;). If yes, it &ldquo;pulls&rdquo; the code from github and executes the necessary commands put in the Bash Script.</p><h1 id=still-facing-issues>Still Facing Issues?</h1><ul><li>Sometimes it takes time for changes to be reflected especially in the case of DNS changes. So if things don&rsquo;t work out immediately check if this is the issue.</li><li>In case you made changes to the Flask Server, don&rsquo;t forget to restart the service.</li><li>Script didn&rsquo;t run? Make sure that you have given the execute permissions to the script using <code>chmod</code></li><li>For debugging, you can redeliver the payload from the Github itself below Webhook settings</li></ul><h1 id=important-things-i-missed>Important things I missed</h1><p>Now anyone can send requests to the Flask server and do malicious things. It is always better to check if the request you got the POST request from Github or not. That was the pupose of the Secret in Webhook settings. You can check <a href=https://developer.github.com/webhooks/securing/>here</a> and <a href=https://github.com/iit-technology-ambit/Midgard/blob/master/hookListen.py>here</a></p><p>What if the repo is not public? In that case, what we can do is to create dummy Github User and give it the necessary permissions(adding collaborator or adding to the Github Organization). And execute this command in the repo directory</p><div class=highlight><div style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>git config remote.origin.url https://{USERNAME}:{PASSWORD}@github.com/{USERNAME}/{REPONAME}.git
+</code></pre></td></tr></table></div></div><p><a href=https://superuser.com/questions/199507/how-do-i-ensure-git-doesnt-ask-me-for-my-github-username-and-password>Ref: Answer by Sergio Morstabilini</a></p><h1 id=conclusion>Conclusion</h1><p>I know I have assumed too many things. But I feel there are better articles to explain such things - Deploying Flask, deploying Django and I have tried putting references at places. Another interesting problem would be what if there was React Application? We need to generate its build also right? Sometimes the instance dies while building the code, so a better option would be to use Travis or Github Workflows to build a new branch which consists of build of the latest code(<a href=https://youtu.be/BFpSD2eoXUk>ref</a>) and then pull the build from that branch.</p></section><div class=post-tags><nav class="nav tags"><ul class=tags><li><a href=/tags/deployment>deployment</a></li></ul></nav></div></article></main><footer><hr><a class=soc href=https://rakaar.github.io/index.xml title=RSS><i data-feather=rss></i></a>|<a class=soc href=mailto:rka87338@gmail.com title=Email><i data-feather=mail></i></a>|<a class=soc href=https://github.com/rakaar title=GitHub><i data-feather=github></i></a>|<a class=soc href=https://twitter.com/raghavendrakau9 title=Twitter><i data-feather=twitter></i></a>|⚡️
+2021 <a href=https://github.com/athul/archie>Archie Theme</a> | Built with <a href=https://gohugo.io>Hugo</a></footer><script>feather.replace()</script></div></body></html>
