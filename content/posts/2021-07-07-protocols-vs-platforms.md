@@ -22,7 +22,7 @@ The protocols are free, but where do the servers that run the protocol come from
 
 Well, the hopes are not yet thrashed. We now see that it is possible to have a currency with a completely decentralized protocol. I am talking about Bitcoin(and other cryptocurrencies). Bitcoin can also be regarded as a protocol, where each individual is a server. Such systems are called peer-to-peer systems. In near future, one can expect new decentralized protocols in similar fashion to become popular.
 
-## Works going on currently in the direction
+## Works that going on currently in the direction
 
 - [Aether](https://aether.app/about/) is a peer to peer network, which is completely serverless
 - [Bluesky](https://www.theverge.com/2021/1/21/22242718/twitter-bluesky-decentralized-social-media-team-project-update), twitter's decentralized social network
