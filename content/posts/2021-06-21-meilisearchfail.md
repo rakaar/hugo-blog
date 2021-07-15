@@ -36,16 +36,16 @@ const search_words_for_right_trim = search.split(" ");
 const search_words_for_left_trim = search.split(" ");
 
 // Till there is atleast one result, keep trimming words from the query
-while(search_response.hits.length === 0 && (search_words_for_left_trim.length + search_words_for_right_trim.length !== 0)) {
+while(search_response.hits.length === 0 && (search_words_for_left_trim.length > 1 || search_words_for_right_trim.length > 1)) {
 
     // initially words are trimmed from the right hand side
-        if(search_words_for_right_trim.length !== 0) {
+        if (search_words_for_right_trim.length > 1) {
           search_words_for_right_trim.pop()
           const new_query = search_words_for_right_trim.join(' ')
           search_response = await client.index(INDEX).search(new_query);
         }
     // if trimming from right has not fetched any results, words are trimmed from the left hand side
-        else {
+        else if(search_words_for_left_trim.length > 1) {
           search_words_for_left_trim.shift()
           const new_query = search_words_for_left_trim.join(' ')
           search_response = await client.index(INDEX).search(new_query);
